@@ -1,10 +1,10 @@
 package com.garbagemule.MobArena.util.timer;
 
+import com.garbagemule.MobArena.framework.Arena;
+import com.garbagemule.MobArena.message.MessageKey;
+
 import static com.garbagemule.MobArena.util.timer.Common.toSeconds;
 import static com.garbagemule.MobArena.util.timer.Common.toTicks;
-
-import com.garbagemule.MobArena.Msg;
-import com.garbagemule.MobArena.framework.Arena;
 
 /**
  * The ChatCallback will periodically announce a message to all players in an
@@ -15,13 +15,13 @@ import com.garbagemule.MobArena.framework.Arena;
  */
 public class ChatCallback extends TimerCallbackAdapter {
     private Arena arena;
-    private Msg msg;
+    private MessageKey msg;
     private CountdownTimer timer;
 
     private int[] triggers;
     private int index;
 
-    public ChatCallback(Arena arena, Msg msg, CountdownTimer timer, int[] triggers) {
+    public ChatCallback(Arena arena, MessageKey msg, CountdownTimer timer, int[] triggers) {
         this.arena = arena;
         this.msg   = msg;
         this.timer = timer;

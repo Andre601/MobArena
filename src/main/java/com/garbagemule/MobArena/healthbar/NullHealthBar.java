@@ -2,7 +2,8 @@ package com.garbagemule.MobArena.healthbar;
 
 import org.bukkit.entity.Player;
 
-class NullHealthBar implements HealthBar {
+class NullHealthBar implements HealthBar
+{
 
     @Override
     public void setProgress(double progress) {

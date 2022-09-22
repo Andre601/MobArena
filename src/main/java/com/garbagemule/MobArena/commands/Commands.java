@@ -1,8 +1,8 @@
 package com.garbagemule.MobArena.commands;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.util.TextUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -38,21 +38,21 @@ public class Commands
     public static Arena getArenaToJoinOrSpec(ArenaMaster am, Player p, String arg1) {
         // Check if MobArena is enabled first.
         if (!am.isEnabled()) {
-            am.getGlobalMessenger().tell(p, Msg.JOIN_NOT_ENABLED);
+            am.sendMessage(p, MessageKey.JOIN_NOT_ENABLED);
             return null;
         }
 
         // Then check if we have permission at all.
         List<Arena> arenas = am.getPermittedArenas(p);
         if (arenas.isEmpty()) {
-            am.getGlobalMessenger().tell(p, Msg.JOIN_NO_PERMISSION);
+            am.sendMessage(p, MessageKey.JOIN_NO_PERMISSION);
             return null;
         }
 
         // Then check if we have any enabled arenas.
         arenas = am.getEnabledArenas(arenas);
         if (arenas.isEmpty()) {
-            am.getGlobalMessenger().tell(p, Msg.JOIN_NOT_ENABLED);
+            am.sendMessage(p, MessageKey.JOIN_NOT_ENABLED);
             return null;
         }
 
@@ -63,19 +63,19 @@ public class Commands
         if (arg1 != null) {
             arena = am.getArenaWithName(arg1);
             if (arena == null) {
-                am.getGlobalMessenger().tell(p, Msg.ARENA_DOES_NOT_EXIST);
+                am.sendMessage(p, MessageKey.ARENA_DOES_NOT_EXIST);
                 return null;
             }
 
             if (!arenas.contains(arena)) {
-                am.getGlobalMessenger().tell(p, Msg.JOIN_ARENA_NOT_ENABLED);
+                am.sendMessage(p, MessageKey.JOIN_ARENA_NOT_ENABLED);
                 return null;
             }
         }
         else {
             if (arenas.size() > 1) {
-                am.getGlobalMessenger().tell(p, Msg.JOIN_ARG_NEEDED);
-                am.getGlobalMessenger().tell(p, Msg.MISC_LIST_ARENAS.format(TextUtils.listToString(arenas)));
+                am.sendMessage(p, MessageKey.JOIN_ARG_NEEDED);
+                am.sendMessage(p, MessageKey.MISC_LIST_ARENAS, TextUtils.listToString(arenas));
                 return null;
             }
             arena = arenas.get(0);

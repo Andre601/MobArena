@@ -5,7 +5,8 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.Set;
 
-class TitleHealthBar implements HealthBar {
+class TitleHealthBar implements HealthBar
+{
 
     private static final int FADE_IN_TICKS = 5;
     private static final int STAY_TICKS = 40;

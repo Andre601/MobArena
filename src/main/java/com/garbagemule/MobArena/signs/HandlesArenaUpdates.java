@@ -1,13 +1,7 @@
 package com.garbagemule.MobArena.signs;
 
 import com.garbagemule.MobArena.MobArena;
-import com.garbagemule.MobArena.events.ArenaEndEvent;
-import com.garbagemule.MobArena.events.ArenaPlayerDeathEvent;
-import com.garbagemule.MobArena.events.ArenaPlayerJoinEvent;
-import com.garbagemule.MobArena.events.ArenaPlayerLeaveEvent;
-import com.garbagemule.MobArena.events.ArenaPlayerReadyEvent;
-import com.garbagemule.MobArena.events.ArenaStartEvent;
-import com.garbagemule.MobArena.events.NewWaveEvent;
+import com.garbagemule.MobArena.events.*;
 import com.garbagemule.MobArena.framework.Arena;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

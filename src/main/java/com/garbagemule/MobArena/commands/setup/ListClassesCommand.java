@@ -18,15 +18,15 @@ public class ListClassesCommand implements Command
 {
     @Override
     public boolean execute(ArenaMaster am, CommandSender sender, String... args) {
-        am.getGlobalMessenger().tell(sender, "Current classes:");
+        am.sendMessage(sender, "Current classes:");
         Set<String> classes = am.getClasses().keySet();
         if (classes == null || classes.isEmpty()) {
-            am.getGlobalMessenger().tell(sender, "<none>");
+            am.sendMessage(sender, "<none>");
             return true;
         }
 
         for (String c : classes) {
-            am.getGlobalMessenger().tell(sender, "- " + c);
+            am.sendMessage(sender, "- " + c);
         }
         return true;
     }

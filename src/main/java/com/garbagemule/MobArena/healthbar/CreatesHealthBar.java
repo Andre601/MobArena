@@ -2,7 +2,8 @@ package com.garbagemule.MobArena.healthbar;
 
 import org.bukkit.entity.Entity;
 
-public class CreatesHealthBar {
+public class CreatesHealthBar
+{
 
     private final String type;
     private final CreatesHealthString createsHealthString;

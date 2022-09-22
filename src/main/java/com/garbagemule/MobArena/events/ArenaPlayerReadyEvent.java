@@ -6,6 +6,9 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * Called when a player marks itself as "ready".
+ */
 public class ArenaPlayerReadyEvent extends Event implements Cancellable
 {
     private static final HandlerList handlers = new HandlerList();
@@ -18,11 +21,21 @@ public class ArenaPlayerReadyEvent extends Event implements Cancellable
         this.arena =  arena;
         this.cancelled = false;
     }
-
+    
+    /**
+     * The player that marked itself as ready.
+     * 
+     * @return The player that marked itself as ready.
+     */
     public Player getPlayer() {
         return player;
     }
-
+    
+    /**
+     * The Arena where the event happened in.
+     *
+     * @return An Arena.
+     */
     public Arena getArena() {
         return arena;
     }

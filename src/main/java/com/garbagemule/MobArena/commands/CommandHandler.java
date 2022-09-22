@@ -1,37 +1,12 @@
 package com.garbagemule.MobArena.commands;
 
 import com.garbagemule.MobArena.ConfigError;
-import com.garbagemule.MobArena.Messenger;
 import com.garbagemule.MobArena.MobArena;
-import com.garbagemule.MobArena.Msg;
-import com.garbagemule.MobArena.commands.admin.AddRewardCommand;
-import com.garbagemule.MobArena.commands.admin.DisableCommand;
-import com.garbagemule.MobArena.commands.admin.EnableCommand;
-import com.garbagemule.MobArena.commands.admin.ForceCommand;
-import com.garbagemule.MobArena.commands.admin.KickCommand;
-import com.garbagemule.MobArena.commands.admin.RestoreCommand;
-import com.garbagemule.MobArena.commands.setup.AddArenaCommand;
-import com.garbagemule.MobArena.commands.setup.AutoGenerateCommand;
-import com.garbagemule.MobArena.commands.setup.CheckDataCommand;
-import com.garbagemule.MobArena.commands.setup.CheckSpawnsCommand;
-import com.garbagemule.MobArena.commands.setup.ClassChestCommand;
-import com.garbagemule.MobArena.commands.setup.EditArenaCommand;
-import com.garbagemule.MobArena.commands.setup.ListClassesCommand;
-import com.garbagemule.MobArena.commands.setup.RemoveArenaCommand;
-import com.garbagemule.MobArena.commands.setup.RemoveContainerCommand;
-import com.garbagemule.MobArena.commands.setup.RemoveLeaderboardCommand;
-import com.garbagemule.MobArena.commands.setup.RemoveSpawnpointCommand;
-import com.garbagemule.MobArena.commands.setup.SettingCommand;
-import com.garbagemule.MobArena.commands.setup.SetupCommand;
-import com.garbagemule.MobArena.commands.user.ArenaListCommand;
-import com.garbagemule.MobArena.commands.user.JoinCommand;
-import com.garbagemule.MobArena.commands.user.LeaveCommand;
-import com.garbagemule.MobArena.commands.user.NotReadyCommand;
-import com.garbagemule.MobArena.commands.user.PickClassCommand;
-import com.garbagemule.MobArena.commands.user.PlayerListCommand;
-import com.garbagemule.MobArena.commands.user.SpecCommand;
-import com.garbagemule.MobArena.commands.user.ReadyCommand;
+import com.garbagemule.MobArena.commands.admin.*;
+import com.garbagemule.MobArena.commands.setup.*;
+import com.garbagemule.MobArena.commands.user.*;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -39,25 +14,18 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class CommandHandler implements CommandExecutor, TabCompleter
 {
     private MobArena plugin;
-    private Messenger fallbackMessenger;
 
     private Map<String,Command> commands;
 
     public CommandHandler(MobArena plugin) {
         this.plugin = plugin;
-        this.fallbackMessenger = new Messenger("&a[MobArena] ");
 
         registerCommands();
     }
@@ -75,7 +43,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter
 
         // If there's no base argument, show a helpful message.
         if (base.equals("")) {
-            return safeTell(sender, Msg.MISC_HELP);
+            return safeTell(sender, MessageKey.MISC_HELP);
         }
 
         // Reloads are special
@@ -85,7 +53,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter
 
         Throwable lastFailureCause = plugin.getLastFailureCause();
         if (lastFailureCause != null) {
-            fallbackMessenger.tell(sender, "MobArena is disabled, because:\n" + ChatColor.RED + lastFailureCause.getMessage());
+            plugin.sendMessage(sender, "MobArena is disabled. Reason:\n" + ChatColor.RED + lastFailureCause.getMessage());
             return true;
         }
 
@@ -102,7 +70,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter
 
         // If there's more than one match, display them.
         if (matches.size() > 1) {
-            am.getGlobalMessenger().tell(sender, Msg.MISC_MULTIPLE_MATCHES);
+            am.sendMessage(sender, MessageKey.MISC_MULTIPLE_MATCHES);
             for (Command cmd : matches) {
                 showUsage(cmd, sender, false);
             }
@@ -111,7 +79,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter
 
         // If there are no matches at all, notify.
         if (matches.size() == 0) {
-            am.getGlobalMessenger().tell(sender, Msg.MISC_NO_MATCHES);
+            am.sendMessage(sender, MessageKey.MISC_NO_MATCHES);
             return true;
         }
 
@@ -121,7 +89,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter
 
         // First check if the sender has permission.
         if (!sender.hasPermission(info.permission())) {
-            am.getGlobalMessenger().tell(sender, Msg.MISC_NO_ACCESS);
+            am.sendMessage(sender, MessageKey.MISC_NO_ACCESS);
             return true;
         }
 
@@ -141,25 +109,25 @@ public class CommandHandler implements CommandExecutor, TabCompleter
 
     private boolean reload(CommandSender sender) {
         if (!sender.hasPermission("mobarena.setup.load") && !sender.hasPermission("mobarena.setup.config")) {
-            return safeTell(sender, Msg.MISC_NO_ACCESS);
+            return safeTell(sender, MessageKey.MISC_NO_ACCESS);
         }
         try {
             plugin.reload();
-            plugin.getArenaMaster().getGlobalMessenger().tell(sender, "Reload complete.");
+            plugin.sendMessage(sender, "Reload complete.");
         } catch (ConfigError e) {
-            fallbackMessenger.tell(sender, "Reload failed due to config-file error:\n" + ChatColor.RED + e.getMessage());
+            plugin.sendMessage(sender, "Reload failed due to config-file error:\n" + ChatColor.RED + e.getMessage());
         } catch (Exception e) {
-            fallbackMessenger.tell(sender, "Reload failed:\n" + ChatColor.RED + e.getMessage());
+            plugin.sendMessage(sender, "Reload failed:\n" + ChatColor.RED + e.getMessage());
         }
         return true;
     }
 
-    private boolean safeTell(CommandSender sender, Msg msg) {
+    private boolean safeTell(CommandSender sender, MessageKey msg) {
         ArenaMaster am = plugin.getArenaMaster();
         if (am != null) {
-            am.getGlobalMessenger().tell(sender, msg);
+            am.sendMessage(sender, msg);
         } else {
-            fallbackMessenger.tell(sender, msg);
+            plugin.sendMessage(sender, msg);
         }
         return true;
     }
@@ -234,11 +202,11 @@ public class CommandHandler implements CommandExecutor, TabCompleter
         ArenaMaster am = plugin.getArenaMaster();
 
         if (admin.length() == 0 && setup.length() == 0) {
-            am.getGlobalMessenger().tell(sender, "Available commands: " + user.toString());
+            am.sendMessage(sender, "Available commands: " + user.toString());
         } else {
-            am.getGlobalMessenger().tell(sender, "User commands: " + user.toString());
-            if (admin.length() > 0) am.getGlobalMessenger().tell(sender, "Admin commands: " + admin.toString());
-            if (setup.length() > 0) am.getGlobalMessenger().tell(sender, "Setup commands: " + setup.toString());
+            am.sendMessage(sender, "User commands: " + user.toString());
+            if (admin.length() > 0) am.sendMessage(sender, "Admin commands: " + admin.toString());
+            if (setup.length() > 0) am.sendMessage(sender, "Setup commands: " + setup.toString());
         }
     }
 
@@ -278,8 +246,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter
         if (args.length == 1) {
             return commands.values().stream()
                 .map(cmd -> cmd.getClass().getAnnotation(CommandInfo.class))
-                .filter(info -> info.name().startsWith(base))
                 .map(CommandInfo::name)
+                .filter(name -> name.startsWith(base))
                 .sorted()
                 .collect(Collectors.toList());
         }

@@ -23,7 +23,7 @@ public class RemoveSpawnpointCommand implements Command
         String point;
         if (args.length == 1) {
             if (am.getArenas().size() > 1) {
-                am.getGlobalMessenger().tell(sender, "There are multiple arenas.");
+                am.sendMessage(sender, "There are multiple arenas.");
                 return true;
             }
             arena = am.getArenas().get(0);
@@ -31,16 +31,16 @@ public class RemoveSpawnpointCommand implements Command
         } else {
             arena = am.getArenaWithName(args[0]);
             if (arena == null) {
-                am.getGlobalMessenger().tell(sender, "There is no arena named " + args[0]);
+                am.sendMessage(sender, "There is no arena named " + args[0]);
                 return true;
             }
             point = args[1];
         }
 
         if (arena.getRegion().removeSpawn(point)) {
-            am.getGlobalMessenger().tell(sender, "Spawnpoint " + point + " removed for arena '" + arena.configName() + "'");
+            am.sendMessage(sender, "Spawnpoint " + point + " removed for arena '" + arena.configName() + "'");
         } else {
-            am.getGlobalMessenger().tell(sender, "Could not find the spawnpoint " + point + " for the arena '" + arena.configName() + "'");
+            am.sendMessage(sender, "Could not find the spawnpoint " + point + " for the arena '" + arena.configName() + "'");
         }
         return true;
     }

@@ -9,26 +9,17 @@ import com.garbagemule.MobArena.formula.FormulaManager;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
 import com.garbagemule.MobArena.listeners.MAGlobalListener;
-import com.garbagemule.MobArena.metrics.ArenaCountChart;
-import com.garbagemule.MobArena.metrics.ClassChestsChart;
-import com.garbagemule.MobArena.metrics.ClassCountChart;
-import com.garbagemule.MobArena.metrics.FoodRegenChart;
-import com.garbagemule.MobArena.metrics.IsolatedChatChart;
-import com.garbagemule.MobArena.metrics.MonsterInfightChart;
-import com.garbagemule.MobArena.metrics.PvpEnabledChart;
-import com.garbagemule.MobArena.metrics.VaultChart;
+import com.garbagemule.MobArena.message.MessageHandler;
+import com.garbagemule.MobArena.message.MessageKey;
+import com.garbagemule.MobArena.metrics.*;
 import com.garbagemule.MobArena.signs.SignBootstrap;
 import com.garbagemule.MobArena.signs.SignListeners;
-import com.garbagemule.MobArena.things.NothingPickerParser;
-import com.garbagemule.MobArena.things.RandomThingPickerParser;
-import com.garbagemule.MobArena.things.ThingGroupPickerParser;
-import com.garbagemule.MobArena.things.ThingManager;
-import com.garbagemule.MobArena.things.ThingPickerManager;
-import com.garbagemule.MobArena.util.config.ConfigUtils;
+import com.garbagemule.MobArena.things.*;
 import com.garbagemule.MobArena.waves.ability.AbilityManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -40,6 +31,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -66,6 +59,7 @@ public class MobArena extends JavaPlugin
     private ThingPickerManager pickman;
     private FormulaManager formman;
     private FormulaMacros macros;
+    private MessageHandler messageHandler;
 
     private SignListeners signListeners;
 
@@ -236,10 +230,14 @@ public class MobArena extends JavaPlugin
         File file = new File(getDataFolder(), "announcements.yml");
         try {
             if (file.createNewFile()) {
+                InputStream is = this.getResource("announcements.yml");
+                if(is == null) {
+                    throw new RuntimeException("Unable to create announcements.yml file from template!");
+                }
+                
+                Files.copy(is, file.toPath());
+                
                 getLogger().info("announcements.yml created.");
-                YamlConfiguration yaml = Msg.toYaml();
-                yaml.save(file);
-                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -249,8 +247,8 @@ public class MobArena extends JavaPlugin
         try {
             YamlConfiguration yaml = new YamlConfiguration();
             yaml.load(file);
-            ConfigUtils.addMissingRemoveObsolete(file, Msg.toYaml(), yaml);
-            Msg.load(yaml);
+            
+            messageHandler = new MessageHandler(yaml);
         } catch (IOException e) {
             throw new RuntimeException("There was an error reading the announcements-file:\n" + e.getMessage());
         } catch (InvalidConfigurationException e) {
@@ -316,5 +314,21 @@ public class MobArena extends JavaPlugin
 
     public FormulaMacros getFormulaMacros() {
         return macros;
+    }
+    
+    public MessageHandler getMessageHandler(){
+        return messageHandler;
+    }
+    
+    public void sendMessage(CommandSender sender, MessageKey key) {
+        sendMessage(sender, key, null);
+    }
+    
+    public void sendMessage(CommandSender sender, MessageKey key, String s) {
+        messageHandler.sendMessage(sender, key, s, getGlobalMessenger());
+    }
+    
+    public void sendMessage(CommandSender sender, String message) {
+        getGlobalMessenger().tell(sender, message);
     }
 }

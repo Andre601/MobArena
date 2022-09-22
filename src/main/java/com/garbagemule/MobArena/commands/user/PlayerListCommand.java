@@ -1,11 +1,11 @@
 package com.garbagemule.MobArena.commands.user;
 
 import com.garbagemule.MobArena.MAUtils;
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,7 +31,7 @@ public class PlayerListCommand implements Command
             Arena arena = am.getArenaWithName(arg1);
 
             if (arena == null) {
-                am.getGlobalMessenger().tell(sender, Msg.ARENA_DOES_NOT_EXIST);
+                am.sendMessage(sender, MessageKey.ARENA_DOES_NOT_EXIST);
                 return false;
             }
 
@@ -48,7 +48,7 @@ public class PlayerListCommand implements Command
             list = buffy.toString();
         }
 
-        am.getGlobalMessenger().tell(sender, Msg.MISC_LIST_PLAYERS.format(list));
+        am.sendMessage(sender, MessageKey.MISC_LIST_PLAYERS, list);
         return true;
     }
 }

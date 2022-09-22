@@ -7,7 +7,8 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-class BossHealthBar implements HealthBar {
+class BossHealthBar implements HealthBar
+{
 
     private static final double LOW_HEALTH = 0.25;
 

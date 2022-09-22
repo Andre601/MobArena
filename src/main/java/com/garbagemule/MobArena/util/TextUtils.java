@@ -1,6 +1,5 @@
 package com.garbagemule.MobArena.util;
 
-import com.garbagemule.MobArena.Msg;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -69,7 +68,7 @@ public class TextUtils
 
     public static String playerListToString(Collection<? extends Player> list) {
         if (list.isEmpty()) {
-            return Msg.MISC_NONE.toString();
+            return "none";
         }
 
         StringBuffer buffy = new StringBuffer();
@@ -81,7 +80,7 @@ public class TextUtils
 
     public static String listToString(Collection<? extends Object> list) {
         if (list.isEmpty()) {
-            return Msg.MISC_NONE.toString();
+            return "none";
         }
 
         StringBuffer buffy = new StringBuffer();

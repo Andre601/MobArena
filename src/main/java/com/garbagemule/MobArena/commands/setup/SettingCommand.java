@@ -31,7 +31,7 @@ public class SettingCommand implements Command {
         // Find the arena first
         Arena arena = am.getArenaWithName(args[0]);
         if (arena == null) {
-            am.getGlobalMessenger().tell(sender, "There's no arena with the name '" + args[0] + "'.");
+            am.sendMessage(sender, "There's no arena with the name '" + args[0] + "'.");
             return true;
         }
 
@@ -44,7 +44,7 @@ public class SettingCommand implements Command {
                 buffy.append(ChatColor.AQUA).append(entry.getKey()).append(ChatColor.RESET).append(": ");
                 buffy.append(ChatColor.YELLOW).append(entry.getValue());
             }
-            am.getGlobalMessenger().tell(sender, buffy.toString());
+            am.sendMessage(sender, buffy.toString());
             return true;
         }
 
@@ -55,7 +55,7 @@ public class SettingCommand implements Command {
             buffy.append(ChatColor.RED).append(" is not a valid setting.");
             buffy.append("Type ").append(ChatColor.YELLOW).append("/ma setting ").append(args[0]);
             buffy.append(ChatColor.RESET).append(" to see all settings.");
-            am.getGlobalMessenger().tell(sender, buffy.toString());
+            am.sendMessage(sender, buffy.toString());
             return true;
         }
 
@@ -64,14 +64,14 @@ public class SettingCommand implements Command {
             StringBuilder buffy = new StringBuilder();
             buffy.append(ChatColor.AQUA).append(args[1]).append(ChatColor.RESET).append(": ");
             buffy.append(ChatColor.YELLOW).append(val);
-            am.getGlobalMessenger().tell(sender, buffy.toString());
+            am.sendMessage(sender, buffy.toString());
             return true;
         }
 
         // Otherwise, determine the value of the setting
         if (val instanceof Boolean) {
             if (!args[2].matches("on|off|yes|no|true|false")) {
-                am.getGlobalMessenger().tell(sender, "Expected a boolean value for that setting");
+                am.sendMessage(sender, "Expected a boolean value for that setting");
                 return true;
             }
             boolean value = args[2].matches("on|yes|true");
@@ -81,7 +81,7 @@ public class SettingCommand implements Command {
             try {
                 arena.getSettings().set(args[1], Integer.parseInt(args[2]));
             } catch (NumberFormatException e) {
-                am.getGlobalMessenger().tell(sender, "Expected a numeric value for that setting.");
+                am.sendMessage(sender, "Expected a numeric value for that setting.");
                 return true;
             }
         } else {
@@ -93,8 +93,8 @@ public class SettingCommand implements Command {
         try {
             am.reloadArena(args[0]);
         } catch (ConfigError e) {
-            am.getGlobalMessenger().tell(sender, "Failed to reload arena after changing setting, reason:\n" + ChatColor.RED + e.getMessage());
-            am.getGlobalMessenger().tell(sender, "Fix the error in your config-file, then run " + ChatColor.YELLOW + "/ma reload");
+            am.sendMessage(sender, "Failed to reload arena after changing setting, reason:\n" + ChatColor.RED + e.getMessage());
+            am.sendMessage(sender, "Fix the error in your config-file, then run " + ChatColor.YELLOW + "/ma reload");
             return true;
         }
 
@@ -104,7 +104,7 @@ public class SettingCommand implements Command {
         buffy.append(" for arena ").append(ChatColor.GREEN).append(args[0]).append(ChatColor.RESET);
         buffy.append(" set to ").append(ChatColor.YELLOW).append(args[2]).append(ChatColor.RESET);
         buffy.append("!");
-        am.getGlobalMessenger().tell(sender, buffy.toString());
+        am.sendMessage(sender, buffy.toString());
         return true;
     }
 

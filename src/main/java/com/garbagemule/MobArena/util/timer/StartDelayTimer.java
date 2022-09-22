@@ -1,7 +1,7 @@
 package com.garbagemule.MobArena.util.timer;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.framework.Arena;
+import com.garbagemule.MobArena.message.MessageKey;
 
 /**
  * The StartDelayTimer is a self-contained CountdownTimer (i.e. it is its own
@@ -45,8 +45,8 @@ public class StartDelayTimer extends CountdownTimer implements TimerCallback {
         this.autoStartTimer = autoStartTimer;
 
         // Set the duration
-        long duration = arena.getSettings().getInt("start-delay-timer", 0) * 20l;
-        setDuration(Math.max(0l, duration));
+        long duration = arena.getSettings().getInt("start-delay-timer", 0) * 20L;
+        setDuration(Math.max(0L, duration));
 
         // Choose level- or chat-callback
         boolean level = arena.getSettings().getBoolean("display-timer-as-level", false);
@@ -54,7 +54,7 @@ public class StartDelayTimer extends CountdownTimer implements TimerCallback {
             internalCallback = new LevelCallback(arena, this);
         } else {
             int[] triggers = {30, 10, 5, 4, 3, 2, 1};
-            internalCallback = new ChatCallback(arena, Msg.ARENA_START_DELAY, this, triggers);
+            internalCallback = new ChatCallback(arena, MessageKey.ARENA_START_DELAY, this, triggers);
         }
     }
 
@@ -105,7 +105,7 @@ public class StartDelayTimer extends CountdownTimer implements TimerCallback {
 
             // Notify players of auto-start-timer duration
             if (autoStartTimer.isRunning()) {
-                arena.announce(Msg.ARENA_AUTO_START, "" + autoStartTimer.getRemaining() / 20l);
+                arena.announce(MessageKey.ARENA_AUTO_START, String.valueOf(autoStartTimer.getRemaining() / 20L));
             }
         }
     }

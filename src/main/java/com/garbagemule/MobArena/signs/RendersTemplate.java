@@ -1,15 +1,15 @@
 package com.garbagemule.MobArena.signs;
 
+import com.garbagemule.MobArena.framework.Arena;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.garbagemule.MobArena.framework.Arena;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import static java.lang.String.valueOf;
 

@@ -1,13 +1,11 @@
 package com.garbagemule.MobArena.commands.setup;
 
-import static com.garbagemule.MobArena.util.config.ConfigUtils.setLocation;
-
 import com.garbagemule.MobArena.ArenaClass;
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.commands.Commands;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.util.Slugs;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.garbagemule.MobArena.util.config.ConfigUtils.setLocation;
+
 @CommandInfo(
     name    = "classchest",
     pattern = "classchest",
@@ -31,7 +31,7 @@ public class ClassChestCommand implements Command {
     @Override
     public boolean execute(ArenaMaster am, CommandSender sender, String... args) {
         if (!Commands.isPlayer(sender)) {
-            am.getGlobalMessenger().tell(sender, Msg.MISC_NOT_FROM_CONSOLE);
+            am.sendMessage(sender, MessageKey.MISC_NOT_FROM_CONSOLE);
             return true;
         }
 
@@ -41,7 +41,7 @@ public class ClassChestCommand implements Command {
         String slug = Slugs.create(args[0]);
         ArenaClass ac = am.getClasses().get(slug);
         if (ac == null) {
-            am.getGlobalMessenger().tell(sender, "Class not found.");
+            am.sendMessage(sender, "Class not found.");
             return true;
         }
 
@@ -54,13 +54,13 @@ public class ClassChestCommand implements Command {
             case TRAPPED_CHEST:
                 break;
             default:
-                am.getGlobalMessenger().tell(sender, "You must look at a chest.");
+                am.sendMessage(sender, "You must look at a chest.");
                 return true;
         }
 
         setLocation(am.getPlugin().getConfig(), "classes." + ac.getConfigName() + ".classchest", b.getLocation());
         am.saveConfig();
-        am.getGlobalMessenger().tell(sender, "Class chest updated for class " + ac.getConfigName());
+        am.sendMessage(sender, "Class chest updated for class " + ac.getConfigName());
         am.loadClasses();
         return true;
     }

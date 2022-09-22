@@ -1,17 +1,8 @@
 package com.garbagemule.MobArena.framework;
 
-import com.garbagemule.MobArena.ArenaClass;
-import com.garbagemule.MobArena.ArenaListener;
-import com.garbagemule.MobArena.ArenaPlayer;
-import com.garbagemule.MobArena.ClassLimitManager;
-import com.garbagemule.MobArena.MASpawnThread;
-import com.garbagemule.MobArena.Messenger;
-import com.garbagemule.MobArena.MobArena;
-import com.garbagemule.MobArena.MonsterManager;
-import com.garbagemule.MobArena.Msg;
-import com.garbagemule.MobArena.RewardManager;
-import com.garbagemule.MobArena.ScoreboardManager;
+import com.garbagemule.MobArena.*;
 import com.garbagemule.MobArena.leaderboards.Leaderboard;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.region.ArenaRegion;
 import com.garbagemule.MobArena.repairable.Repairable;
 import com.garbagemule.MobArena.things.Thing;
@@ -22,6 +13,7 @@ import com.garbagemule.MobArena.waves.WaveManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -116,12 +108,18 @@ public interface Arena
     Messenger getMessenger();
 
     Messenger getGlobalMessenger();
-
-    void announce(String msg);
-
-    void announce(Msg msg, String s);
-
-    void announce(Msg msg);
+    
+    void announce(MessageKey key);
+    
+    void announce(MessageKey key, String s);
+    
+    void announce(String message);
+    
+    void tell(CommandSender player, MessageKey key);
+    
+    void tell(CommandSender player, MessageKey key, String s);
+    
+    void tell(CommandSender sender, String message);
 
 
 

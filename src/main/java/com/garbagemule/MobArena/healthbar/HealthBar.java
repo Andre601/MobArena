@@ -2,7 +2,8 @@ package com.garbagemule.MobArena.healthbar;
 
 import org.bukkit.entity.Player;
 
-public interface HealthBar {
+public interface HealthBar
+{
 
     void setProgress(double progress);
 

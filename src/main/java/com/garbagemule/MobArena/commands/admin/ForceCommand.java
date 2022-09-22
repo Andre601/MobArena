@@ -1,10 +1,10 @@
 package com.garbagemule.MobArena.commands.admin;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,7 +37,7 @@ public class ForceCommand implements Command
                 for (Arena arena : am.getArenas()) {
                     arena.forceEnd();
                 }
-                am.getGlobalMessenger().tell(sender, Msg.FORCE_END_ENDED);
+                am.sendMessage(sender, MessageKey.FORCE_END_ENDED);
                 am.resetArenaMap();
                 return true;
             }
@@ -45,18 +45,18 @@ public class ForceCommand implements Command
             // Otherwise, grab the arena in question.
             Arena arena = am.getArenaWithName(arg2);
             if (arena == null) {
-                am.getGlobalMessenger().tell(sender, Msg.ARENA_DOES_NOT_EXIST);
+                am.sendMessage(sender, MessageKey.ARENA_DOES_NOT_EXIST);
                 return true;
             }
 
             if (arena.getAllPlayers().isEmpty()) {
-                am.getGlobalMessenger().tell(sender, Msg.FORCE_END_EMPTY);
+                am.sendMessage(sender, MessageKey.FORCE_END_EMPTY);
                 return true;
             }
 
             // And end it!
             arena.forceEnd();
-            am.getGlobalMessenger().tell(sender, Msg.FORCE_END_ENDED);
+            am.sendMessage(sender, MessageKey.FORCE_END_ENDED);
             return true;
         }
 
@@ -67,23 +67,23 @@ public class ForceCommand implements Command
             // Grab the arena.
             Arena arena = am.getArenaWithName(arg2);
             if (arena == null) {
-                am.getGlobalMessenger().tell(sender, Msg.ARENA_DOES_NOT_EXIST);
+                am.sendMessage(sender, MessageKey.ARENA_DOES_NOT_EXIST);
                 return true;
             }
 
             if (arena.isRunning()) {
-                am.getGlobalMessenger().tell(sender, Msg.FORCE_START_RUNNING);
+                am.sendMessage(sender, MessageKey.FORCE_START_RUNNING);
                 return true;
             }
 
             if (arena.getReadyPlayersInLobby().isEmpty()) {
-                am.getGlobalMessenger().tell(sender, Msg.FORCE_START_NOT_READY);
+                am.sendMessage(sender, MessageKey.FORCE_START_NOT_READY);
                 return true;
             }
 
             // And start it!
             arena.forceStart();
-            am.getGlobalMessenger().tell(sender, Msg.FORCE_START_STARTED);
+            am.sendMessage(sender, MessageKey.FORCE_START_STARTED);
             return true;
         }
         return false;

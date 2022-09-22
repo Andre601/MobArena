@@ -4,11 +4,13 @@ import com.garbagemule.MobArena.MobArena;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 /**
  * Called right after MobArena has reloaded.
  * <p>
  * The primary goal of this event is to allow extension plugins to "ride
- * along" with the <code>/ma reload</code> command so they don't have to
+ * along" with the <code>/ma reload</code> command, so they don't have to
  * implement their own commands. <i>One command to rule them all.</i>
  * <p>
  * This event is useful if you need to work with arenas, classes, etc. in
@@ -41,6 +43,7 @@ public class MobArenaReloadEvent extends Event {
     }
 
     @Override
+    @Nonnull
     public HandlerList getHandlers() {
         return handlers;
     }

@@ -2,12 +2,12 @@ package com.garbagemule.MobArena.commands.user;
 
 import com.garbagemule.MobArena.ArenaClass;
 import com.garbagemule.MobArena.ClassLimitManager;
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.commands.Commands;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.things.Thing;
 import com.garbagemule.MobArena.util.ClassChests;
 import com.garbagemule.MobArena.util.Slugs;
@@ -31,7 +31,7 @@ public class PickClassCommand implements Command
     @Override
     public boolean execute(ArenaMaster am, CommandSender sender, String... args) {
         if (!Commands.isPlayer(sender)) {
-            am.getGlobalMessenger().tell(sender, Msg.MISC_NOT_FROM_CONSOLE);
+            am.sendMessage(sender, MessageKey.MISC_NOT_FROM_CONSOLE);
             return true;
         }
 
@@ -47,7 +47,7 @@ public class PickClassCommand implements Command
 
         // Make sure the player is in the lobby
         if (!arena.inLobby(p)) {
-            arena.getMessenger().tell(p, Msg.MISC_NO_ACCESS);
+            arena.tell(p, MessageKey.MISC_NO_ACCESS);
             return true;
         }
 
@@ -55,13 +55,13 @@ public class PickClassCommand implements Command
         String slug = Slugs.create(args[0]);
         ArenaClass ac = am.getClasses().get(slug);
         if (ac == null) {
-            arena.getMessenger().tell(p, Msg.LOBBY_NO_SUCH_CLASS, slug);
+            arena.tell(p, MessageKey.LOBBY_NO_SUCH_CLASS, slug);
             return true;
         }
 
         // Check for permission.
         if (!ac.hasPermission(p) && !slug.equals("random")) {
-            arena.getMessenger().tell(p, Msg.LOBBY_CLASS_PERMISSION);
+            arena.tell(p, MessageKey.LOBBY_CLASS_PERMISSION);
             return true;
         }
 
@@ -72,7 +72,7 @@ public class PickClassCommand implements Command
         // If the new class is full, inform the player.
         ClassLimitManager clm = arena.getClassLimitManager();
         if (!clm.canPlayerJoinClass(ac)) {
-            arena.getMessenger().tell(p, Msg.LOBBY_CLASS_FULL);
+            arena.tell(p, MessageKey.LOBBY_CLASS_FULL);
             return true;
         }
 
@@ -80,7 +80,7 @@ public class PickClassCommand implements Command
         Thing price = ac.getPrice();
         if (price != null) {
             if (!price.heldBy(p)) {
-                arena.getMessenger().tell(p, Msg.LOBBY_CLASS_TOO_EXPENSIVE, price.toString());
+                arena.tell(p, MessageKey.LOBBY_CLASS_TOO_EXPENSIVE, price.toString());
                 return true;
             }
         }
@@ -97,13 +97,13 @@ public class PickClassCommand implements Command
                 // No linked chest? Fall through to config-file
             }
             arena.assignClass(p, slug);
-            arena.getMessenger().tell(p, Msg.LOBBY_CLASS_PICKED, arena.getClasses().get(slug).getConfigName());
+            arena.tell(p, MessageKey.LOBBY_CLASS_PICKED, arena.getClasses().get(slug).getConfigName());
             if (price != null) {
-                arena.getMessenger().tell(p, Msg.LOBBY_CLASS_PRICE, price.toString());
+                arena.tell(p, MessageKey.LOBBY_CLASS_PRICE, price.toString());
             }
         } else {
             arena.addRandomPlayer(p);
-            arena.getMessenger().tell(p, Msg.LOBBY_CLASS_RANDOM);
+            arena.tell(p, MessageKey.LOBBY_CLASS_RANDOM);
         }
         return true;
     }

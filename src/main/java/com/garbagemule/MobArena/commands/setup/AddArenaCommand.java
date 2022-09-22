@@ -1,17 +1,14 @@
 package com.garbagemule.MobArena.commands.setup;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.commands.Commands;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.util.Slugs;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @CommandInfo(
     name    = "addarena",
@@ -25,7 +22,7 @@ public class AddArenaCommand implements Command
     @Override
     public boolean execute(ArenaMaster am, CommandSender sender, String... args) {
         if (!Commands.isPlayer(sender)) {
-            am.getGlobalMessenger().tell(sender, Msg.MISC_NOT_FROM_CONSOLE);
+            am.sendMessage(sender, MessageKey.MISC_NOT_FROM_CONSOLE);
             return true;
         }
 
@@ -39,11 +36,11 @@ public class AddArenaCommand implements Command
         String slug = Slugs.create(name);
         Arena arena = am.getArenaWithName(slug);
         if (arena != null) {
-            am.getGlobalMessenger().tell(sender, "An arena with that name already exists.");
+            am.sendMessage(sender, "An arena with that name already exists.");
             return true;
         }
         am.createArenaNode(name, p.getWorld());
-        am.getGlobalMessenger().tell(sender, "New arena with name '" + name + "' created!");
+        am.sendMessage(sender, "New arena with name '" + name + "' created!");
         return true;
     }
 }

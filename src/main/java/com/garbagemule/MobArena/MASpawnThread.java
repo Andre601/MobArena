@@ -5,6 +5,7 @@ import com.garbagemule.MobArena.events.NewWaveEvent;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.healthbar.CreatesHealthBar;
 import com.garbagemule.MobArena.healthbar.HealthBar;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.region.ArenaRegion;
 import com.garbagemule.MobArena.things.ExperienceThing;
 import com.garbagemule.MobArena.things.Thing;
@@ -396,7 +397,7 @@ public class MASpawnThread implements Runnable
             Thing reward = picker.pick();
             if (reward != null) {
                 rewardManager.addReward(p, reward);
-                arena.getMessenger().tell(p, Msg.WAVE_REWARD, reward.toString());
+                arena.tell(p, MessageKey.WAVE_REWARD, reward.toString());
             }
         }
     }

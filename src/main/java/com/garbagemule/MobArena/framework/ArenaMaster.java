@@ -1,12 +1,13 @@
 package com.garbagemule.MobArena.framework;
 
 import com.garbagemule.MobArena.ArenaClass;
-import com.garbagemule.MobArena.Messenger;
 import com.garbagemule.MobArena.MobArena;
 import com.garbagemule.MobArena.SpawnsPets;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.util.JoinInterruptTimer;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -24,8 +25,12 @@ public interface ArenaMaster
 
 
     MobArena getPlugin();
-
-    Messenger getGlobalMessenger();
+    
+    void sendMessage(CommandSender sender, MessageKey key);
+    
+    void sendMessage(CommandSender sender, MessageKey key, String s);
+    
+    void sendMessage(CommandSender sender, String message);
 
     boolean isEnabled();
 

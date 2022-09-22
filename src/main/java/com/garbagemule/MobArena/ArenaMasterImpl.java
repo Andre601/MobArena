@@ -1,10 +1,8 @@
 package com.garbagemule.MobArena;
 
-import static com.garbagemule.MobArena.util.config.ConfigUtils.makeSection;
-import static com.garbagemule.MobArena.util.config.ConfigUtils.parseLocation;
-
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.things.InvalidThingInputString;
 import com.garbagemule.MobArena.things.Thing;
 import com.garbagemule.MobArena.util.JoinInterruptTimer;
@@ -14,22 +12,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static com.garbagemule.MobArena.util.config.ConfigUtils.makeSection;
+import static com.garbagemule.MobArena.util.config.ConfigUtils.parseLocation;
 
 public class ArenaMasterImpl implements ArenaMaster
 {
@@ -73,12 +68,21 @@ public class ArenaMasterImpl implements ArenaMaster
     public MobArena getPlugin() {
         return plugin;
     }
-
+    
     @Override
-    public Messenger getGlobalMessenger() {
-        return plugin.getGlobalMessenger();
+    public void sendMessage(CommandSender sender, MessageKey key) {
+        sendMessage(sender, key, null);
     }
-
+    
+    public void sendMessage(CommandSender sender, MessageKey key, String s) {
+        plugin.sendMessage(sender, key, s);
+    }
+    
+    @Override
+    public void sendMessage(CommandSender sender, String message){
+        plugin.sendMessage(sender, message);
+    }
+    
     public boolean isEnabled() {
         return plugin.getLastFailureCause() == null && enabled;
     }

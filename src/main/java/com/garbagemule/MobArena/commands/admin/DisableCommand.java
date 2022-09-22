@@ -1,10 +1,10 @@
 package com.garbagemule.MobArena.commands.admin;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class DisableCommand implements Command
         if (!arg1.equals("")) {
             Arena arena = am.getArenaWithName(arg1);
             if (arena == null) {
-                am.getGlobalMessenger().tell(sender, Msg.ARENA_DOES_NOT_EXIST);
+                am.sendMessage(sender, MessageKey.ARENA_DOES_NOT_EXIST);
                 return true;
             }
             disable(arena, sender);
@@ -46,14 +46,14 @@ public class DisableCommand implements Command
 
         am.setEnabled(false);
         am.saveConfig();
-        am.getGlobalMessenger().tell(sender, "MobArena " + ChatColor.RED + "disabled");
+        am.sendMessage(sender, "MobArena " + ChatColor.RED + "disabled");
         return true;
     }
 
     private void disable(Arena arena, CommandSender sender) {
         arena.setEnabled(false);
         arena.getPlugin().saveConfig();
-        arena.getGlobalMessenger().tell(sender, "Arena '" + arena.configName() + "' " + ChatColor.RED + "disabled");
+        arena.tell(sender, "Arena '" + arena.configName() + "' " + ChatColor.RED + "disabled");
     }
 
     @Override

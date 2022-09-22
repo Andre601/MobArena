@@ -4,15 +4,10 @@ import com.garbagemule.MobArena.events.ArenaKillEvent;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.leaderboards.Leaderboard;
 import com.garbagemule.MobArena.listeners.MAGlobalListener.TeleportResponse;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.region.ArenaRegion;
 import com.garbagemule.MobArena.region.RegionPoint;
-import com.garbagemule.MobArena.repairable.Repairable;
-import com.garbagemule.MobArena.repairable.RepairableAttachable;
-import com.garbagemule.MobArena.repairable.RepairableBed;
-import com.garbagemule.MobArena.repairable.RepairableBlock;
-import com.garbagemule.MobArena.repairable.RepairableContainer;
-import com.garbagemule.MobArena.repairable.RepairableDoor;
-import com.garbagemule.MobArena.repairable.RepairableSign;
+import com.garbagemule.MobArena.repairable.*;
 import com.garbagemule.MobArena.things.ExperienceThing;
 import com.garbagemule.MobArena.things.Thing;
 import com.garbagemule.MobArena.things.ThingPicker;
@@ -27,61 +22,15 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event.Result;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityCombustByBlockEvent;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -95,12 +44,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class ArenaListener
 {
@@ -517,7 +461,7 @@ public class ArenaListener
             onMountDeath(event);
         }
         else if (monsters.removeGolem(event.getEntity())) {
-            arena.announce(Msg.GOLEM_DIED);
+            arena.announce(MessageKey.GOLEM_DIED);
         }
     }
 
@@ -595,14 +539,14 @@ public class ArenaListener
                 MABoss boss = monsters.getBoss(damagee);
                 if (boss != null) {
                     for (Player q : arena.getPlayersInArena()) {
-                        arena.getMessenger().tell(q, Msg.WAVE_BOSS_KILLED, p.getName());
+                        arena.tell(q, MessageKey.WAVE_BOSS_KILLED, p.getName());
                     }
                     ThingPicker picker = boss.getReward();
                     if (picker != null) {
                         Thing reward = picker.pick();
                         if (reward != null) {
                             arena.getRewardManager().addReward(p, reward);
-                            arena.getMessenger().tell(damager, Msg.WAVE_BOSS_REWARD_EARNED, reward.toString());
+                            arena.tell(damager, MessageKey.WAVE_BOSS_REWARD_EARNED, reward.toString());
                         }
                     }
                 }
@@ -1030,25 +974,25 @@ public class ArenaListener
         // If the player is active in the arena, only cancel if sharing is not allowed
         if (arena.inArena(p)) {
             if (!canShare) {
-                arena.getMessenger().tell(p, Msg.LOBBY_DROP_ITEM);
+                arena.tell(p, MessageKey.LOBBY_DROP_ITEM);
                 event.setCancelled(true);
             }
         }
 
         // If the player is in the lobby, just cancel
         else if (arena.inLobby(p)) {
-            arena.getMessenger().tell(p, Msg.LOBBY_DROP_ITEM);
+            arena.tell(p, MessageKey.LOBBY_DROP_ITEM);
             event.setCancelled(true);
         }
 
         // Same if it's a spectator, but...
         else if (arena.inSpec(p)) {
-            arena.getMessenger().tell(p, Msg.LOBBY_DROP_ITEM);
+            arena.tell(p, MessageKey.LOBBY_DROP_ITEM);
             event.setCancelled(true);
 
             // If the spectator isn't in the region, force them to leave
             if (!region.contains(p.getLocation())) {
-                arena.getMessenger().tell(p, Msg.MISC_MA_LEAVE_REMINDER);
+                arena.tell(p, MessageKey.MISC_MA_LEAVE_REMINDER);
                 arena.playerLeave(p);
             }
         }
@@ -1059,7 +1003,7 @@ public class ArenaListener
          * they are trying to drop items when not allowed
          */
         else if (region.contains(p.getLocation())) {
-            arena.getMessenger().tell(p, Msg.LOBBY_DROP_ITEM);
+            arena.tell(p, MessageKey.LOBBY_DROP_ITEM);
             event.setCancelled(true);
         }
 
@@ -1120,11 +1064,11 @@ public class ArenaListener
 
     private void handleReadyBlock(Player p) {
         if (arena.getArenaPlayer(p).getArenaClass() != null) {
-            arena.getMessenger().tell(p, Msg.LOBBY_PLAYER_READY);
+            arena.tell(p, MessageKey.LOBBY_PLAYER_READY);
             arena.playerReady(p);
         }
         else {
-            arena.getMessenger().tell(p, Msg.LOBBY_PICK_CLASS);
+            arena.tell(p, MessageKey.LOBBY_PICK_CLASS);
         }
     }
 
@@ -1140,7 +1084,7 @@ public class ArenaListener
 
         // Check for permission.
         if (!newAC.hasPermission(p) && !slug.equals("random")) {
-            arena.getMessenger().tell(p, Msg.LOBBY_CLASS_PERMISSION);
+            arena.tell(p, MessageKey.LOBBY_CLASS_PERMISSION);
             return;
         }
 
@@ -1153,7 +1097,7 @@ public class ArenaListener
 
         // If the new class is full, inform the player.
         if (!classLimits.canPlayerJoinClass(newAC)) {
-            arena.getMessenger().tell(p, Msg.LOBBY_CLASS_FULL);
+            arena.tell(p, MessageKey.LOBBY_CLASS_FULL);
             return;
         }
 
@@ -1161,7 +1105,7 @@ public class ArenaListener
         Thing price = newAC.getPrice();
         if (price != null) {
             if (!price.heldBy(p)) {
-                arena.getMessenger().tell(p, Msg.LOBBY_CLASS_TOO_EXPENSIVE, price.toString());
+                arena.tell(p, MessageKey.LOBBY_CLASS_TOO_EXPENSIVE, price.toString());
                 return;
             }
         }
@@ -1201,14 +1145,14 @@ public class ArenaListener
                         // Otherwise just fall through and use the items from the config-file
                     }
                     arena.assignClass(p, slug);
-                    arena.getMessenger().tell(p, Msg.LOBBY_CLASS_PICKED, arena.getClasses().get(slug).getConfigName());
+                    arena.tell(p, MessageKey.LOBBY_CLASS_PICKED, arena.getClasses().get(slug).getConfigName());
                     if (price != null) {
-                        arena.getMessenger().tell(p, Msg.LOBBY_CLASS_PRICE,  price.toString());
+                        arena.tell(p, MessageKey.LOBBY_CLASS_PRICE,  price.toString());
                     }
                 }
                 else {
                     arena.addRandomPlayer(p);
-                    arena.getMessenger().tell(p, Msg.LOBBY_CLASS_RANDOM);
+                    arena.tell(p, MessageKey.LOBBY_CLASS_RANDOM);
                 }
             }
         });
@@ -1275,20 +1219,20 @@ public class ArenaListener
             if (region.contains(to)) {
                 // Inside -> inside
                 if (!(arena.inArena(p) || arena.inLobby(p))) {
-                    return reject(p, Msg.WARP_TO_ARENA);
+                    return reject(p, MessageKey.WARP_TO_ARENA);
                 }
                 return TeleportResponse.ALLOW;
             } else {
                 // Inside -> outside
                 if (arena.getAllPlayers().contains(p)) {
-                    return reject(p, Msg.WARP_FROM_ARENA);
+                    return reject(p, MessageKey.WARP_FROM_ARENA);
                 }
                 return TeleportResponse.IDGAF;
             }
         } else {
             if (region.contains(to)) {
                 // Outside -> inside
-                return reject(p, Msg.WARP_TO_ARENA);
+                return reject(p, MessageKey.WARP_TO_ARENA);
             } else {
                 // Outside -> outside
                 return TeleportResponse.IDGAF;
@@ -1296,12 +1240,12 @@ public class ArenaListener
         }
     }
 
-    private TeleportResponse reject(Player p, Msg message) {
+    private TeleportResponse reject(Player p, MessageKey message) {
         if (p.hasPermission("mobarena.admin.teleport")) {
             return TeleportResponse.IDGAF;
         }
 
-        arena.getMessenger().tell(p, message);
+        arena.tell(p, message);
         return TeleportResponse.REJECT;
     }
 
@@ -1331,7 +1275,7 @@ public class ArenaListener
 
         // Cancel the event regardless.
         event.setCancelled(true);
-        arena.getMessenger().tell(p, Msg.MISC_COMMAND_NOT_ALLOWED);
+        arena.tell(p, MessageKey.MISC_COMMAND_NOT_ALLOWED);
     }
 
     public void onPlayerPreLogin(PlayerLoginEvent event) {

@@ -26,17 +26,17 @@ public class RemoveArenaCommand implements Command
         if (args.length != 1) return false;
 
         if (am.getArenas().size() == 1) {
-            am.getGlobalMessenger().tell(sender, "At least one arena must exist.");
+            am.sendMessage(sender, "At least one arena must exist.");
             return true;
         }
 
         Arena arena = am.getArenaWithName(args[0]);
         if (arena == null) {
-            am.getGlobalMessenger().tell(sender, "There is no arena with that name.");
+            am.sendMessage(sender, "There is no arena with that name.");
             return true;
         }
         am.removeArenaNode(arena);
-        am.getGlobalMessenger().tell(sender, "Arena '" + arena.configName() + "' deleted.");
+        am.sendMessage(sender, "Arena '" + arena.configName() + "' deleted.");
         return true;
     }
 

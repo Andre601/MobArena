@@ -1,27 +1,22 @@
 package com.garbagemule.MobArena;
 
-import static com.garbagemule.MobArena.util.config.ConfigUtils.makeSection;
-
 import com.garbagemule.MobArena.ScoreboardManager.NullScoreboardManager;
 import com.garbagemule.MobArena.announce.Announcer;
 import com.garbagemule.MobArena.announce.MessengerAnnouncer;
 import com.garbagemule.MobArena.announce.TitleAnnouncer;
-import com.garbagemule.MobArena.steps.Step;
-import com.garbagemule.MobArena.steps.StepFactory;
-import com.garbagemule.MobArena.steps.PlayerJoinArena;
-import com.garbagemule.MobArena.steps.PlayerSpecArena;
-import com.garbagemule.MobArena.events.ArenaEndEvent;
-import com.garbagemule.MobArena.events.ArenaPlayerDeathEvent;
-import com.garbagemule.MobArena.events.ArenaPlayerJoinEvent;
-import com.garbagemule.MobArena.events.ArenaPlayerLeaveEvent;
-import com.garbagemule.MobArena.events.ArenaPlayerReadyEvent;
-import com.garbagemule.MobArena.events.ArenaStartEvent;
+import com.garbagemule.MobArena.events.*;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.leaderboards.Leaderboard;
+import com.garbagemule.MobArena.message.MessageHandler;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.region.ArenaRegion;
 import com.garbagemule.MobArena.repairable.Repairable;
 import com.garbagemule.MobArena.repairable.RepairableComparator;
 import com.garbagemule.MobArena.repairable.RepairableContainer;
+import com.garbagemule.MobArena.steps.PlayerJoinArena;
+import com.garbagemule.MobArena.steps.PlayerSpecArena;
+import com.garbagemule.MobArena.steps.Step;
+import com.garbagemule.MobArena.steps.StepFactory;
 import com.garbagemule.MobArena.things.InvalidThingInputString;
 import com.garbagemule.MobArena.things.Thing;
 import com.garbagemule.MobArena.things.ThingPicker;
@@ -33,21 +28,13 @@ import com.garbagemule.MobArena.util.timer.StartDelayTimer;
 import com.garbagemule.MobArena.waves.MABoss;
 import com.garbagemule.MobArena.waves.SheepBouncer;
 import com.garbagemule.MobArena.waves.WaveManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -58,20 +45,12 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import static com.garbagemule.MobArena.util.config.ConfigUtils.makeSection;
 
 public class ArenaImpl implements Arena
 {
@@ -469,22 +448,39 @@ public class ArenaImpl implements Arena
     public Messenger getGlobalMessenger() {
         return plugin.getGlobalMessenger();
     }
-
+    
     @Override
-    public void announce(String msg) {
+    public void announce(MessageKey key) {
+        announce(key, null);
+    }
+    
+    @Override
+    public void announce(MessageKey key, String s) {
         for (Player p : getAllPlayers()) {
-            announcer.announce(p, msg);
+            plugin.getMessageHandler().sendAnnouncement(p, key, s, announcer);
         }
     }
-
+    
     @Override
-    public void announce(Msg msg, String s) {
-        announce(msg.format(s));
+    public void announce(String message) {
+        for (Player p : getAllPlayers()) {
+            announcer.announce(p, message);
+        }
     }
-
+    
     @Override
-    public void announce(Msg msg) {
-        announce(msg.toString());
+    public void tell(CommandSender sender, MessageKey key) {
+        tell(sender, key, null);
+    }
+    
+    @Override
+    public void tell(CommandSender sender, MessageKey key, String s) {
+        plugin.getMessageHandler().sendMessage(sender, key, s, messenger);
+    }
+    
+    @Override
+    public void tell(CommandSender sender, String message) {
+        plugin.sendMessage(sender, message);
     }
 
     @Override
@@ -587,7 +583,7 @@ public class ArenaImpl implements Arena
         leaderboard.initialize();
         leaderboard.startTracking();
 
-        announce(Msg.ARENA_START);
+        announce(MessageKey.ARENA_START);
 
         return true;
     }
@@ -625,10 +621,10 @@ public class ArenaImpl implements Arena
         // Announce and clean arena floor, etc.
         if (settings.getBoolean("global-end-announce", false)) {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                messenger.tell(p, Msg.ARENA_END_GLOBAL, configName());
+                tell(p, MessageKey.ARENA_END_GLOBAL, configName());
             }
         } else {
-            announce(Msg.ARENA_END);
+            announce(MessageKey.ARENA_END);
         }
         cleanup();
 
@@ -665,7 +661,7 @@ public class ArenaImpl implements Arena
         // Force leave.
         for (Player p : tmp) {
             playerLeave(p);
-            messenger.tell(p, Msg.LEAVE_NOT_READY);
+            tell(p, MessageKey.LEAVE_NOT_READY);
         }
 
         // Stop start-delay-timer and start arena
@@ -716,17 +712,17 @@ public class ArenaImpl implements Arena
 
         if (!entryFee.isEmpty()) {
             if (!takeFee(p)) {
-                messenger.tell(p, Msg.JOIN_FEE_REQUIRED, MAUtils.listToString(entryFee, plugin));
+                tell(p, MessageKey.JOIN_FEE_REQUIRED, MAUtils.listToString(entryFee, plugin));
                 return false;
             }
-            messenger.tell(p, Msg.JOIN_FEE_PAID.format(MAUtils.listToString(entryFee, plugin)));
+            tell(p, MessageKey.JOIN_FEE_PAID, MAUtils.listToString(entryFee, plugin));
         }
 
         // Announce globally (must happen before moving player)
         if (settings.getBoolean("global-join-announce", false)) {
             if (lobbyPlayers.isEmpty()) {
                 for (Player q : Bukkit.getOnlinePlayers()) {
-                    messenger.tell(q, Msg.ARENA_JOIN_GLOBAL, configName());
+                    tell(p, MessageKey.ARENA_JOIN_GLOBAL, configName());
                 }
             }
         }
@@ -751,13 +747,13 @@ public class ArenaImpl implements Arena
         }
 
         // Notify player of joining
-        messenger.tell(p, Msg.JOIN_PLAYER_JOINED);
+        tell(p, MessageKey.JOIN_PLAYER_JOINED);
 
         // Notify player of time left
         if (startDelayTimer.isRunning()) {
-            messenger.tell(p, Msg.ARENA_START_DELAY, "" + startDelayTimer.getRemaining() / 20l);
+            tell(p, MessageKey.ARENA_START_DELAY, String.valueOf(startDelayTimer.getRemaining() / 20L));
         } else if (autoStartTimer.isRunning()) {
-            messenger.tell(p, Msg.ARENA_AUTO_START, "" + autoStartTimer.getRemaining() / 20l);
+            tell(p, MessageKey.ARENA_AUTO_START, String.valueOf(autoStartTimer.getRemaining() / 20L));
         }
 
         if (defaultClass != null) {
@@ -765,7 +761,7 @@ public class ArenaImpl implements Arena
             if (!ClassChests.assignClassFromStoredClassChest(this, p, defaultClass)) {
                 String slug = defaultClass.getSlug();
                 assignClass(p, slug);
-                messenger.tell(p, Msg.LOBBY_CLASS_PICKED, defaultClass.getConfigName());
+                tell(p, MessageKey.LOBBY_CLASS_PICKED, defaultClass.getConfigName());
             }
         }
 
@@ -787,7 +783,7 @@ public class ArenaImpl implements Arena
         int minPlayers = getMinPlayers();
         if (minPlayers > 0 && lobbyPlayers.size() < minPlayers)
         {
-            messenger.tell(p, Msg.LOBBY_NOT_ENOUGH_PLAYERS, "" + minPlayers);
+            tell(p, MessageKey.LOBBY_NOT_ENOUGH_PLAYERS, String.valueOf(minPlayers));
             return;
         }
 
@@ -920,7 +916,7 @@ public class ArenaImpl implements Arena
             // the arena is running. If not, the session has probably
             // ended, so we fall through to schedule an auto-leave.
             if (!settings.getBoolean("auto-leave-on-end", false) || running) {
-                messenger.tell(p, Msg.SPEC_PLAYER_SPECTATE);
+                tell(p, MessageKey.SPEC_PLAYER_SPECTATE);
                 return;
             }
         }
@@ -956,7 +952,7 @@ public class ArenaImpl implements Arena
         specPlayers.add(p);
         plugin.getArenaMaster().addPlayer(p, this);
 
-        messenger.tell(p, Msg.SPEC_PLAYER_SPECTATE);
+        tell(p, MessageKey.SPEC_PLAYER_SPECTATE);
         movingPlayers.remove(p);
     }
 
@@ -1340,7 +1336,7 @@ public class ArenaImpl implements Arena
         String slug = classes.get(index).getSlug();
 
         assignClass(p, slug);
-        messenger.tell(p, Msg.LOBBY_CLASS_PICKED, this.classes.get(slug).getConfigName());
+        tell(p, MessageKey.LOBBY_CLASS_PICKED, this.classes.get(slug).getConfigName());
     }
 
     private void addClassPermissions(Player player) {
@@ -1576,25 +1572,25 @@ public class ArenaImpl implements Arena
     @Override
     public boolean canJoin(Player p) {
         if (!enabled)
-            messenger.tell(p, Msg.JOIN_ARENA_NOT_ENABLED);
+            tell(p, MessageKey.JOIN_ARENA_NOT_ENABLED);
         else if (!region.isSetup())
-            messenger.tell(p, Msg.JOIN_ARENA_NOT_SETUP);
+            tell(p, MessageKey.JOIN_ARENA_NOT_SETUP);
         else if (edit)
-            messenger.tell(p, Msg.JOIN_ARENA_EDIT_MODE);
+            tell(p, MessageKey.JOIN_ARENA_EDIT_MODE);
         else if (arenaPlayers.contains(p) || lobbyPlayers.contains(p))
-            messenger.tell(p, Msg.JOIN_ALREADY_PLAYING);
+            tell(p, MessageKey.JOIN_ALREADY_PLAYING);
         else if (running)
-            messenger.tell(p, Msg.JOIN_ARENA_IS_RUNNING);
+            tell(p, MessageKey.JOIN_ARENA_IS_RUNNING);
         else if (!hasPermission(p))
-            messenger.tell(p, Msg.JOIN_ARENA_PERMISSION);
+            tell(p, MessageKey.JOIN_ARENA_PERMISSION);
         else if (getMaxPlayers() > 0 && lobbyPlayers.size() >= getMaxPlayers())
-            messenger.tell(p, Msg.JOIN_PLAYER_LIMIT_REACHED);
+            tell(p, MessageKey.JOIN_PLAYER_LIMIT_REACHED);
         else if (getJoinDistance() > 0 && !region.contains(p.getLocation(), getJoinDistance()))
-            messenger.tell(p, Msg.JOIN_TOO_FAR);
+            tell(p, MessageKey.JOIN_TOO_FAR);
         else if (settings.getBoolean("require-empty-inv-join", true) && !InventoryManager.hasEmptyInventory(p))
-            messenger.tell(p, Msg.JOIN_EMPTY_INV);
+            tell(p, MessageKey.JOIN_EMPTY_INV);
         else if (!canAfford(p))
-            messenger.tell(p, Msg.JOIN_FEE_REQUIRED, MAUtils.listToString(entryFee, plugin));
+            tell(p, MessageKey.JOIN_FEE_REQUIRED, MAUtils.listToString(entryFee, plugin));
         else return true;
 
         return false;
@@ -1603,17 +1599,17 @@ public class ArenaImpl implements Arena
     @Override
     public boolean canSpec(Player p) {
         if (!enabled)
-            messenger.tell(p, Msg.JOIN_ARENA_NOT_ENABLED);
+            tell(p, MessageKey.JOIN_ARENA_NOT_ENABLED);
         else if (!region.isSetup())
-            messenger.tell(p, Msg.JOIN_ARENA_NOT_SETUP);
+            tell(p, MessageKey.JOIN_ARENA_NOT_SETUP);
         else if (edit)
-            messenger.tell(p, Msg.JOIN_ARENA_EDIT_MODE);
+            tell(p, MessageKey.JOIN_ARENA_EDIT_MODE);
         else if (arenaPlayers.contains(p) || lobbyPlayers.contains(p))
-            messenger.tell(p, Msg.SPEC_ALREADY_PLAYING);
+            tell(p, MessageKey.SPEC_ALREADY_PLAYING);
         else if (settings.getBoolean("require-empty-inv-spec", true) && !InventoryManager.hasEmptyInventory(p))
-            messenger.tell(p, Msg.SPEC_EMPTY_INV);
+            tell(p, MessageKey.SPEC_EMPTY_INV);
         else if (getJoinDistance() > 0 && !region.contains(p.getLocation(), getJoinDistance()))
-            messenger.tell(p, Msg.JOIN_TOO_FAR);
+            tell(p, MessageKey.JOIN_TOO_FAR);
         else return true;
 
         return false;

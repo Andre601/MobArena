@@ -3,7 +3,8 @@ package com.garbagemule.MobArena.healthbar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-class NameHealthBar implements HealthBar {
+class NameHealthBar implements HealthBar
+{
 
     private final Entity entity;
     private final String title;

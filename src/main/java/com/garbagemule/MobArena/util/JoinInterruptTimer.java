@@ -1,7 +1,7 @@
 package com.garbagemule.MobArena.util;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.framework.Arena;
+import com.garbagemule.MobArena.message.MessageKey;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -79,7 +79,7 @@ public class JoinInterruptTimer {
             if (done || !event.getEntity().equals(player)) {
                 return;
             }
-            arena.getMessenger().tell(player, Msg.JOIN_INTERRUPTED_BY_DAMAGE);
+            arena.tell(player, MessageKey.JOIN_INTERRUPTED_BY_DAMAGE);
             interrupt();
         }
 
@@ -91,7 +91,7 @@ public class JoinInterruptTimer {
             if (location.getWorld() == event.getTo().getWorld() && location.distanceSquared(event.getTo()) < 1) {
                 return;
             }
-            arena.getMessenger().tell(player, Msg.JOIN_INTERRUPTED_BY_MOVEMENT);
+            arena.tell(player, MessageKey.JOIN_INTERRUPTED_BY_MOVEMENT);
             interrupt();
         }
 

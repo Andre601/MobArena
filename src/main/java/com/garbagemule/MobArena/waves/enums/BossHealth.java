@@ -3,7 +3,7 @@ package com.garbagemule.MobArena.waves.enums;
 public enum BossHealth
 {
     VERYLOW(4), LOW(8), MEDIUM(15), HIGH(25), VERYHIGH(40), PSYCHO(60);
-    private int multiplier;
+    private final int multiplier;
 
     BossHealth(int multiplier) {
         this.multiplier = multiplier;

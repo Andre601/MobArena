@@ -5,7 +5,8 @@ import org.bukkit.ChatColor;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class CreatesHealthString {
+class CreatesHealthString
+{
 
     private static final int TOTAL_BARS = 20;
     private static final int LOW_BARS = TOTAL_BARS / 4;

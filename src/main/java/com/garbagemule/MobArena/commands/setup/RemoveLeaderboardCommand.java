@@ -1,10 +1,10 @@
 package com.garbagemule.MobArena.commands.setup;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import org.bukkit.command.CommandSender;
 
 @CommandInfo(
@@ -21,23 +21,23 @@ public class RemoveLeaderboardCommand implements Command
         Arena arena;
         if (args.length == 0) {
             if (am.getArenas().size() > 1) {
-                am.getGlobalMessenger().tell(sender, "There are multiple arenas.");
+                am.sendMessage(sender, "There are multiple arenas.");
                 return true;
             }
             arena = am.getArenas().get(0);
         } else {
             arena = am.getArenaWithName(args[0]);
             if (arena == null) {
-                am.getGlobalMessenger().tell(sender, "There is no arena named " + args[0]);
+                am.sendMessage(sender, "There is no arena named " + args[0]);
                 return true;
             }
         }
 
         if (arena.getRegion().getLeaderboard() != null) {
             arena.getRegion().set("leaderboard", null);
-            am.getGlobalMessenger().tell(sender, "Leaderboard for " + arena.configName() + " successfully removed!");
+            am.sendMessage(sender, "Leaderboard for " + arena.configName() + " successfully removed!");
         } else {
-            am.getGlobalMessenger().tell(sender, Msg.ARENA_LBOARD_NOT_FOUND);
+            am.sendMessage(sender, MessageKey.ARENA_LBOARD_NOT_FOUND);
         }
         return true;
     }

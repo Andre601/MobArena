@@ -1,11 +1,11 @@
 package com.garbagemule.MobArena.commands.setup;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.commands.Commands;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.region.ArenaRegion;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -13,18 +13,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Conversable;
-import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.ConversationAbandonedEvent;
-import org.bukkit.conversations.ConversationAbandonedListener;
-import org.bukkit.conversations.ConversationContext;
-import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -53,7 +44,7 @@ public class SetupCommand implements Command, Listener {
     @Override
     public boolean execute(ArenaMaster am, CommandSender sender, String... args) {
         if (!Commands.isPlayer(sender)) {
-            am.getGlobalMessenger().tell(sender, Msg.MISC_NOT_FROM_CONSOLE);
+            am.sendMessage(sender, MessageKey.MISC_NOT_FROM_CONSOLE);
             return true;
         }
 
@@ -68,8 +59,8 @@ public class SetupCommand implements Command, Listener {
         } else {
             arena = am.getArenaWithName(args[0]);
             if (arena == null) {
-                am.getGlobalMessenger().tell(sender, "There is no arena with the name " + ChatColor.RED + args[0] + ChatColor.RESET + ".");
-                am.getGlobalMessenger().tell(sender, "Type " + ChatColor.YELLOW + "/ma addarena " + args[0] + ChatColor.RESET + " to create it!");
+                am.sendMessage(sender, "There is no arena with the name " + ChatColor.RED + args[0] + ChatColor.RESET + ".");
+                am.sendMessage(sender, "Type " + ChatColor.YELLOW + "/ma addarena " + args[0] + ChatColor.RESET + " to create it!");
                 return true;
             }
         }

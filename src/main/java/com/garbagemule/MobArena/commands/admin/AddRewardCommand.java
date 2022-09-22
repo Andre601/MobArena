@@ -1,10 +1,10 @@
 package com.garbagemule.MobArena.commands.admin;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.things.Thing;
 import com.garbagemule.MobArena.things.ThingPicker;
 import org.bukkit.ChatColor;
@@ -33,21 +33,21 @@ public class AddRewardCommand implements Command {
 
         Player player = am.getPlugin().getServer().getPlayer(args[0]);
         if (player == null) {
-            am.getGlobalMessenger().tell(sender, "Player not found.");
+            am.sendMessage(sender, "Player not found.");
             return true;
         }
 
         Arena arena = am.getArenaWithPlayer(player);
         if (arena == null) {
-            am.getGlobalMessenger().tell(sender, "That player is not in an arena.");
+            am.sendMessage(sender, "That player is not in an arena.");
             return true;
         }
         if (!arena.isRunning()) {
-            am.getGlobalMessenger().tell(sender, "That arena is not running.");
+            am.sendMessage(sender, "That arena is not running.");
             return true;
         }
         if (!arena.getPlayersInArena().contains(player)) {
-            am.getGlobalMessenger().tell(sender, "That player is not an arena player.");
+            am.sendMessage(sender, "That player is not an arena player.");
             return true;
         }
 
@@ -59,15 +59,15 @@ public class AddRewardCommand implements Command {
             ThingPicker picker = am.getPlugin().getThingPickerManager().parse(input);
             thing = picker.pick();
         } catch (Exception e) {
-            am.getGlobalMessenger().tell(sender, e.getMessage());
+            am.sendMessage(sender, e.getMessage());
             return true;
         }
 
         arena.getRewardManager().addReward(player, thing);
-        arena.getMessenger().tell(player, Msg.MISC_REWARD_ADDED, thing.toString());
+        arena.tell(player, MessageKey.MISC_REWARD_ADDED, thing.toString());
 
         String msg = "Added " + ChatColor.YELLOW + thing + ChatColor.RESET + " to " + ChatColor.YELLOW + player.getName() + "'s" + ChatColor.RESET + " rewards.";
-        am.getGlobalMessenger().tell(sender, msg);
+        am.sendMessage(sender, msg);
 
         return true;
     }

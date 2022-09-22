@@ -27,7 +27,7 @@ public class EditArenaCommand implements Command
         Arena arena;
         if (args.length == 0) {
             if (am.getArenas().size() > 1) {
-                am.getGlobalMessenger().tell(sender, "There are multiple arenas.");
+                am.sendMessage(sender, "There are multiple arenas.");
                 return true;
             }
             arena = am.getArenas().get(0);
@@ -35,7 +35,7 @@ public class EditArenaCommand implements Command
         } else if (args.length == 1) {
             if (args[0].matches("on|off|true|false")) {
                 if (am.getArenas().size() > 1) {
-                    am.getGlobalMessenger().tell(sender, "There are multiple arenas.");
+                    am.sendMessage(sender, "There are multiple arenas.");
                     return true;
                 }
                 arena = am.getArenas().get(0);
@@ -43,7 +43,7 @@ public class EditArenaCommand implements Command
             } else {
                 arena = am.getArenaWithName(args[0]);
                 if (arena == null) {
-                    am.getGlobalMessenger().tell(sender, "There is no arena named " + args[0]);
+                    am.sendMessage(sender, "There is no arena named " + args[0]);
                     return true;
                 }
                 value = !arena.inEditMode();
@@ -53,8 +53,8 @@ public class EditArenaCommand implements Command
             value = args[1].matches("on|true");
         }
         arena.setEditMode(value);
-        am.getGlobalMessenger().tell(sender, "Edit mode for arena '" + arena.configName() + "': " + ((arena.inEditMode()) ? ChatColor.GREEN + "true" : ChatColor.RED + "false"));
-        if (arena.inEditMode()) am.getGlobalMessenger().tell(sender, "Remember to turn it back off after editing!");
+        am.sendMessage(sender, "Edit mode for arena '" + arena.configName() + "': " + ((arena.inEditMode()) ? ChatColor.GREEN + "true" : ChatColor.RED + "false"));
+        if (arena.inEditMode()) am.sendMessage(sender, "Remember to turn it back off after editing!");
         return true;
     }
 

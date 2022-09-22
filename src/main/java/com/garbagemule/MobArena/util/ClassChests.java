@@ -1,8 +1,8 @@
 package com.garbagemule.MobArena.util;
 
 import com.garbagemule.MobArena.ArenaClass;
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.framework.Arena;
+import com.garbagemule.MobArena.message.MessageKey;
 import com.garbagemule.MobArena.things.Thing;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -117,11 +117,11 @@ public class ClassChests {
             contents = newContents;
         }
         arena.assignClassGiveInv(player, slug, contents);
-        arena.getMessenger().tell(player, Msg.LOBBY_CLASS_PICKED, arena.getClasses().get(slug).getConfigName());
+        arena.tell(player, MessageKey.LOBBY_CLASS_PICKED, arena.getClasses().get(slug).getConfigName());
 
         Thing price = ac.getPrice();
         if (price != null) {
-            arena.getMessenger().tell(player, Msg.LOBBY_CLASS_PRICE, price.toString());
+            arena.tell(player, MessageKey.LOBBY_CLASS_PRICE, price.toString());
         }
     }
 

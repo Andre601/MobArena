@@ -4,6 +4,8 @@ import com.garbagemule.MobArena.MobArena;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 /**
  * Called right before MobArena begins reloading.
  * <p>
@@ -15,7 +17,7 @@ import org.bukkit.event.HandlerList;
  * This event is <i>not</i> suitable for working with the "current" state
  * of arenas, classes, etc., because MobArena's state at the time of this
  * event is about to become stale. To work with the "current" state after
- * a reload, use the {@link MobArenaReloadEvent} instead.
+ * reloading, use the {@link MobArenaReloadEvent} instead.
  *
  * @see MobArenaReloadEvent
  */
@@ -39,6 +41,7 @@ public class MobArenaPreReloadEvent extends Event {
     }
 
     @Override
+    @Nonnull
     public HandlerList getHandlers() {
         return handlers;
     }

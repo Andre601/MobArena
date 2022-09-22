@@ -15,28 +15,14 @@ import com.garbagemule.MobArena.waves.ability.Ability;
 import com.garbagemule.MobArena.waves.ability.AbilityManager;
 import com.garbagemule.MobArena.waves.enums.WaveBranch;
 import com.garbagemule.MobArena.waves.enums.WaveType;
-import com.garbagemule.MobArena.waves.types.BossWave;
-import com.garbagemule.MobArena.waves.types.DefaultWave;
-import com.garbagemule.MobArena.waves.types.SpecialWave;
-import com.garbagemule.MobArena.waves.types.SupplyWave;
-import com.garbagemule.MobArena.waves.types.SwarmWave;
-import com.garbagemule.MobArena.waves.types.UpgradeWave;
+import com.garbagemule.MobArena.waves.types.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WaveParser

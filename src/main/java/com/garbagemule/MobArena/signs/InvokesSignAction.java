@@ -1,9 +1,9 @@
 package com.garbagemule.MobArena.signs;
 
 import com.garbagemule.MobArena.Messenger;
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -23,7 +23,7 @@ class InvokesSignAction {
             Arena current = arenaMaster.getArenaWithPlayer(player);
             if (current != null) {
                 if (current.inArena(player) || current.inLobby(player)) {
-                    current.getMessenger().tell(player, Msg.JOIN_ALREADY_PLAYING);
+                    current.tell(player, MessageKey.JOIN_ALREADY_PLAYING);
                     return;
                 }
                 if (!current.playerLeave(player)) {
@@ -41,7 +41,7 @@ class InvokesSignAction {
                 if (arena.inArena(player) || arena.inLobby(player) || arena.inSpec(player)) {
                     // Leave message is not sent in playerLeave
                     if (arena.playerLeave(player)) {
-                        arena.getMessenger().tell(player, Msg.LEAVE_PLAYER_LEFT);
+                        arena.tell(player, MessageKey.LEAVE_PLAYER_LEFT);
                     }
                 }
             });

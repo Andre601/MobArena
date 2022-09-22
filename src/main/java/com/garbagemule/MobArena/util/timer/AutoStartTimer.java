@@ -1,7 +1,7 @@
 package com.garbagemule.MobArena.util.timer;
 
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.framework.Arena;
+import com.garbagemule.MobArena.message.MessageKey;
 
 /**
  * The AutoStartTimer is a self-contained CountdownTimer (i.e. it is its own
@@ -49,7 +49,7 @@ public class AutoStartTimer extends CountdownTimer implements TimerCallback {
             internalCallback = new LevelCallback(arena, this);
         } else {
             int[] triggers = {30, 10, 5, 4, 3, 2, 1};
-            internalCallback = new ChatCallback(arena, Msg.ARENA_AUTO_START, this, triggers);
+            internalCallback = new ChatCallback(arena, MessageKey.ARENA_AUTO_START, this, triggers);
         }
     }
 

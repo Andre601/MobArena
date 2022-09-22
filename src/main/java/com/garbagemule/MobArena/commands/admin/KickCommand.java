@@ -27,7 +27,7 @@ public class KickCommand implements Command
 
         Arena arena = am.getArenaWithPlayer(args[0]);
         if (arena == null) {
-            am.getGlobalMessenger().tell(sender, "That player is not in an arena.");
+            am.sendMessage(sender, "That player is not in an arena.");
             return true;
         }
 
@@ -36,8 +36,8 @@ public class KickCommand implements Command
 
         // Force leave.
         arena.playerLeave(bp);
-        am.getGlobalMessenger().tell(sender, "Player '" + args[0] + "' was kicked from arena '" + arena.configName() + "'.");
-        am.getGlobalMessenger().tell(bp, "You were kicked by " + sender.getName() + ".");
+        am.sendMessage(sender, "Player '" + args[0] + "' was kicked from arena '" + arena.configName() + "'.");
+        am.sendMessage(bp, "You were kicked by " + sender.getName() + ".");
         return true;
     }
 

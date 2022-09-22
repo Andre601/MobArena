@@ -13,6 +13,13 @@ public class Messenger
         }
         this.prefix = prefix;
     }
+    
+    public boolean tell(CommandSender p, String msg, String s) {
+        if(s == null)
+            return tell(p, msg);
+        
+        return tell(p, msg.replace("%", s));
+    }
 
     public boolean tell(CommandSender p, String msg) {
         // If the input sender is null or the string is empty, return.
@@ -21,15 +28,7 @@ public class Messenger
         }
 
         // Otherwise, send the message with the [MobArena] tag.
-        p.sendMessage(prefix + ChatColor.RESET + msg);
+        p.sendMessage(prefix + ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', msg));
         return true;
-    }
-
-    public boolean tell(CommandSender p, Msg msg, String s) {
-        return tell(p, msg.format(s));
-    }
-
-    public boolean tell(CommandSender p, Msg msg) {
-        return tell(p, msg.toString());
     }
 }

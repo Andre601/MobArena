@@ -5,14 +5,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Called when an Arena was completed (The final wave has been completed).
+ */
 public class ArenaCompleteEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
-    private Arena arena;
-    private Set<Player> survivors;
+    private final Arena arena;
+    private final Set<Player> survivors;
 
     public ArenaCompleteEvent(Arena arena) {
         this.arena = arena;
@@ -37,7 +41,9 @@ public class ArenaCompleteEvent extends Event {
     public Set<Player> getSurvivors() {
         return survivors;
     }
-
+    
+    @Override
+    @Nonnull
     public HandlerList getHandlers() {
         return handlers;
     }

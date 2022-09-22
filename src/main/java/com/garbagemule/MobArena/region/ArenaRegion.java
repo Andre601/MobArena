@@ -1,19 +1,11 @@
 package com.garbagemule.MobArena.region;
 
-import static com.garbagemule.MobArena.util.config.ConfigUtils.makeSection;
-import static com.garbagemule.MobArena.util.config.ConfigUtils.parseLocation;
-import static com.garbagemule.MobArena.util.config.ConfigUtils.setLocation;
-
 import com.garbagemule.MobArena.ConfigError;
 import com.garbagemule.MobArena.MAUtils;
 import com.garbagemule.MobArena.MobArena;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.util.Enums;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
@@ -21,12 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static com.garbagemule.MobArena.util.config.ConfigUtils.*;
 
 public class ArenaRegion
 {

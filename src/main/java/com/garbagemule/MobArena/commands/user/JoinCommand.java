@@ -1,12 +1,12 @@
 package com.garbagemule.MobArena.commands.user;
 
 import com.garbagemule.MobArena.MobArena;
-import com.garbagemule.MobArena.Msg;
 import com.garbagemule.MobArena.commands.Command;
 import com.garbagemule.MobArena.commands.CommandInfo;
 import com.garbagemule.MobArena.commands.Commands;
 import com.garbagemule.MobArena.framework.Arena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
+import com.garbagemule.MobArena.message.MessageKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -26,7 +26,7 @@ public class JoinCommand implements Command
     @Override
     public boolean execute(ArenaMaster am, CommandSender sender, String... args) {
         if (!Commands.isPlayer(sender)) {
-            am.getGlobalMessenger().tell(sender, Msg.MISC_NOT_FROM_CONSOLE);
+            am.sendMessage(sender, MessageKey.MISC_NOT_FROM_CONSOLE);
             return true;
         }
 
@@ -45,9 +45,9 @@ public class JoinCommand implements Command
         if (seconds > 0) {
             boolean started = am.getJoinInterruptTimer().start(p, toArena, seconds, () -> tryJoin(am, p, toArena));
             if (started) {
-                toArena.getMessenger().tell(p, Msg.JOIN_AFTER_DELAY, String.valueOf(seconds));
+                toArena.tell(p, MessageKey.JOIN_AFTER_DELAY, String.valueOf(seconds));
             } else {
-                toArena.getMessenger().tell(p, Msg.JOIN_ALREADY_PLAYING);
+                toArena.tell(p, MessageKey.JOIN_ALREADY_PLAYING);
             }
         } else {
             tryJoin(am, p, toArena);
@@ -59,7 +59,7 @@ public class JoinCommand implements Command
         MobArena plugin = arena.getPlugin();
         ArenaMaster am = plugin.getArenaMaster();
         if (am.getJoinInterruptTimer().isWaiting(player)) {
-            plugin.getGlobalMessenger().tell(player, Msg.JOIN_ALREADY_PLAYING);
+            plugin.sendMessage(player, MessageKey.JOIN_ALREADY_PLAYING);
             return false;
         }
         return arena.canJoin(player);
@@ -70,7 +70,7 @@ public class JoinCommand implements Command
         Arena current = am.getArenaWithPlayer(player);
         if (current != null) {
             if (current.inArena(player) || current.inLobby(player)) {
-                current.getMessenger().tell(player, Msg.JOIN_ALREADY_PLAYING);
+                current.tell(player, MessageKey.JOIN_ALREADY_PLAYING);
                 return;
             }
             if (!current.playerLeave(player)) {
