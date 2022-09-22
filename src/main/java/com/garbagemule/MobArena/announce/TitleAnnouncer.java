@@ -1,5 +1,6 @@
 package com.garbagemule.MobArena.announce;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class TitleAnnouncer implements Announcer {
@@ -16,7 +17,7 @@ public class TitleAnnouncer implements Announcer {
 
     @Override
     public void announce(Player player, String message) {
-        player.sendTitle(" ", message, fadeIn, stay, fadeOut);
+        player.sendTitle(" ", ChatColor.translateAlternateColorCodes('&', message), fadeIn, stay, fadeOut);
     }
 
 }
